@@ -1,0 +1,3 @@
+﻿namespace FIAP.FCG.Transaction.Service.Exceptions;
+
+public class ForbiddenException(string message) : Exception(message);
