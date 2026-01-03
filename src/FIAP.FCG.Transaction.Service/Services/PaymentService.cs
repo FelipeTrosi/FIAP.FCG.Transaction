@@ -8,9 +8,9 @@ using System.Net.Http.Json;
 
 namespace FIAP.FCG.Transaction.Service.Services;
 
-public class PaymentService(IBaseLogger<TransactionService> logger, IOptions<PaymentLambdaOptions> options) : IPaymentService
+public class PaymentService(IBaseLogger<PaymentService> logger, IOptions<PaymentLambdaOptions> options) : IPaymentService
 {
-    private readonly IBaseLogger<TransactionService> _logger = logger;
+    private readonly IBaseLogger<PaymentService> _logger = logger;
     private readonly PaymentLambdaOptions _options = options.Value;
 
     public async Task<PaymentOutputDto?> ProcessPaymentAsync(object payload)
