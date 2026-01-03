@@ -7,9 +7,10 @@ using FIAP.FCG.Transaction.Service.Util;
 
 namespace FIAP.FCG.Transaction.Service.Services;
 
-public class TransactionService(IBaseLogger<TransactionService> logger, ITransactionRepository repository) : ITransactionService
+public class TransactionService(IBaseLogger<TransactionService> logger, ITransactionRepository repository, IPaymentService paymentService) : ITransactionService
 {
     private readonly ITransactionRepository _repository = repository;
+    private readonly IPaymentService _paymentService = paymentService;
     private readonly IBaseLogger<TransactionService> _logger = logger;
 
 
@@ -17,7 +18,7 @@ public class TransactionService(IBaseLogger<TransactionService> logger, ITransac
     {
         _logger.LogInformation("Iniciando serviço 'CREATE' de transação !");
 
-        _repository.Create(new()
+        var createdTransaction = _repository.Create(new()
         {
             CreatedAt = DateTime.Now,
             Code = entity.Code,
@@ -28,6 +29,18 @@ public class TransactionService(IBaseLogger<TransactionService> logger, ITransac
         });
 
         _logger.LogInformation("Transação cadastrado com sucesso !");
+
+        var random = new Random();
+        int amount = random.Next(57, 399); 
+
+        _paymentService.ProcessPaymentAsync(new
+        {
+            transactionId = createdTransaction.Id,
+            userId = entity.UserId,
+            amount,
+            method = "PIX"
+        });
+
     }
 
 

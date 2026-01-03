@@ -24,8 +24,4 @@
     <ProjectReference Include="..\FIAP.FCG.Transaction.Infrastructure\FIAP.FCG.Transaction.Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dto\" />
-  </ItemGroup>
-
 </Project>

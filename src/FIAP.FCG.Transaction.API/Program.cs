@@ -1,4 +1,5 @@
 using FIAP.FCG.Transaction.API.Extensions;
+using FIAP.FCG.Transaction.Domain.Entity;
 using FIAP.FCG.Transaction.Infrastructure.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -84,6 +85,8 @@ builder.Services.AddCorrelationIdGenerator();
 builder.Services.AddRepositoryDI();
 builder.Services.AddServiceDI();
 
+builder.Services.Configure<PaymentLambdaOptions>(
+    builder.Configuration.GetSection("PaymentLambda"));
 #endregion
 
 builder.Services.AddControllers().AddJsonOptions(options =>

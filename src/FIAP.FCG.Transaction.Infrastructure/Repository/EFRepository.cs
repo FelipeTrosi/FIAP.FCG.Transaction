@@ -9,10 +9,11 @@ namespace FIAP.FCG.Transaction.Infrastructure.Repository
         protected ApplicationDbContext _context = context;
         protected DbSet<T> _dbSet = context.Set<T>();
 
-        public void Create(T entity)
+        public T Create(T entity)
         {
             _dbSet.Add(entity);
             _context.SaveChanges();
+            return entity;
         }
 
         public IList<T> GetAll() 

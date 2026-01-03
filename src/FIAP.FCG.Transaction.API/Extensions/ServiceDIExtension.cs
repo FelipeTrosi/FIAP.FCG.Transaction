@@ -9,8 +9,8 @@ public static class ServiceDIExtension
     public static IServiceCollection AddServiceDI(this IServiceCollection services)
     {
         services.AddTransient(typeof(IBaseLogger<>), typeof(BaseLogger<>));
-
         services.AddTransient<ITransactionService, TransactionService>();
+        services.AddTransient<IPaymentService, PaymentService>();
 
         return services;
     }
