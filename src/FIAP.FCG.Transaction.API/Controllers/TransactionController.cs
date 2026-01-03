@@ -18,7 +18,7 @@ namespace FIAP.FCG.Transaction.API.Controllers
         /// <response code="200">Transação criado com sucesso.</response>
         /// <response code="400">Dados inválidos.</response>
         [HttpPost]
-        //[Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Admin")]
         public IActionResult Post([FromBody] TransactionCreateDto input)
         {
             _service.Create(input);
@@ -32,7 +32,7 @@ namespace FIAP.FCG.Transaction.API.Controllers
         /// <response code="200">Transação atualizado com sucesso.</response>
         /// <response code="404">Transação não encontrado.</response>
         [HttpPut]
-        //[Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Admin")]
         public IActionResult Put([FromBody] TransactionUpdateDto input)
         {
             _service.Update(input);
@@ -46,7 +46,7 @@ namespace FIAP.FCG.Transaction.API.Controllers
         /// <response code="200">Transação removido com sucesso.</response>
         /// <response code="404">Transação não encontrado.</response>
         [HttpDelete("{id:long}")]
-        //[Authorize(Policy = "Admin")]
+        [Authorize(Policy = "Admin")]
         public IActionResult Delete(long id)
         {
             _service.DeleteById(id);
@@ -60,7 +60,7 @@ namespace FIAP.FCG.Transaction.API.Controllers
         /// <response code="200">Transação encontrado.</response>
         /// <response code="404">Transação não encontrado.</response>
         [HttpGet("GetById/{id:long}")]
-        //[Authorize]
+        [Authorize]
         public IActionResult GetById(long id)
         {
             return Ok(_service.GetById(id));
@@ -71,7 +71,7 @@ namespace FIAP.FCG.Transaction.API.Controllers
         /// </summary>
         /// <response code="200">Lista de transaçãos retornada com sucesso.</response>
         [HttpGet("GetAll")]
-        //[Authorize]
+        [Authorize]
         public IActionResult GetAll()
         {
             return Ok(_service.GetAll());
