@@ -1,6 +1,8 @@
 using FIAP.FCG.Transaction.API.Extensions;
 using FIAP.FCG.Transaction.Domain.Entity;
 using FIAP.FCG.Transaction.Infrastructure.Repository;
+using FIAP.FCG.Transaction.Service.Clients;
+using FIAP.FCG.Transaction.Service.Interfaces.Clients;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -87,12 +89,28 @@ builder.Services.AddServiceDI();
 
 builder.Services.Configure<PaymentLambdaOptions>(
     builder.Configuration.GetSection("PaymentLambda"));
+
+builder.Services.AddHttpClient<IUserClient, UserClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:User:BaseUrl"]!);
+    client.Timeout = TimeSpan.FromSeconds(60);
+});
+
+builder.Services.AddHttpClient<IGameClient, GameClient>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Services:Game:BaseUrl"]!);
+    client.Timeout = TimeSpan.FromSeconds(60);
+});
+
+
 #endregion
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+
+builder.Services.AddHealthChecks();
 
 #region -- Datadog
 Log.Logger = new LoggerConfiguration()
@@ -135,6 +153,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//app.MapGet("/health", () => Results.Ok("Ok 200 !"));
+app.MapHealthChecks("/health");
 
 app.Run();

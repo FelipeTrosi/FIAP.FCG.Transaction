@@ -1,7 +1,7 @@
 ﻿using FIAP.FCG.Transaction.Domain.Entity;
 using FIAP.FCG.Transaction.Infrastructure.Logger;
 using FIAP.FCG.Transaction.Service.Dto.Payment;
-using FIAP.FCG.Transaction.Service.Interfaces;
+using FIAP.FCG.Transaction.Service.Interfaces.Services;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Http.Json;

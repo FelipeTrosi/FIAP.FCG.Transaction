@@ -1,5 +1,5 @@
 ﻿using FIAP.FCG.Transaction.Service.Dto.Transaction;
-using FIAP.FCG.Transaction.Service.Interfaces;
+using FIAP.FCG.Transaction.Service.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,5 +1,5 @@
 ﻿using FIAP.FCG.Transaction.Infrastructure.Logger;
-using FIAP.FCG.Transaction.Service.Interfaces;
+using FIAP.FCG.Transaction.Service.Interfaces.Services;
 using FIAP.FCG.Transaction.Service.Services;
 
 namespace FIAP.FCG.Transaction.API.Extensions; 
