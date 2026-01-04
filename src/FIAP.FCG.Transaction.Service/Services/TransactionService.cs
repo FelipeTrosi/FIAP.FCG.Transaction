@@ -5,6 +5,7 @@ using FIAP.FCG.Transaction.Service.Exceptions;
 using FIAP.FCG.Transaction.Service.Interfaces.Clients;
 using FIAP.FCG.Transaction.Service.Interfaces.Services;
 using FIAP.FCG.Transaction.Service.Util;
+using System.Text.Json;
 
 namespace FIAP.FCG.Transaction.Service.Services;
 
@@ -25,8 +26,8 @@ public class TransactionService(IBaseLogger<TransactionService> logger, ITransac
 
         try
         {
-            await _userClient.GetById(entity.UserId, cancellation);
-            await _gameClient.GetById(entity.GameId, cancellation);
+            _userClient.GetById(entity.UserId, cancellation).Wait();
+            _gameClient.GetById(entity.GameId, cancellation).Wait();
 
             var createdTransaction = _repository.Create(new()
             {
@@ -43,13 +44,13 @@ public class TransactionService(IBaseLogger<TransactionService> logger, ITransac
             var random = new Random();
             int amount = random.Next(57, 399);
 
-            await _paymentService.ProcessPaymentAsync(new
+            _paymentService.ProcessPaymentAsync(new
             {
                 transactionId = createdTransaction.Id,
                 userId = entity.UserId,
                 amount,
                 method = "PIX"
-            });
+            }).Wait();
         }
         catch (Exception ex)
         {

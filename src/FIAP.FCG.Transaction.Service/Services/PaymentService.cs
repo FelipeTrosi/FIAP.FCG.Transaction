@@ -21,11 +21,15 @@ public class PaymentService(IBaseLogger<PaymentService> logger, IOptions<Payment
         var resp = await http.PostAsJsonAsync(_options.Url, payload);
 
         if (resp.StatusCode != HttpStatusCode.OK)
+        {
             _logger.LogError($"Serviço AWS Lambda para processo da transação retornou com falha: {resp.StatusCode} - {resp.Content}");
+            throw new Exception($"Serviço AWS Lambda para processo da transação retornou com falha: {resp.StatusCode} - {resp.Content}");
+        }
         else
             _logger.LogInformation("Serviço AWS Lambda para processo da transação retornado com sucesso");
 
         return await resp.Content.ReadFromJsonAsync<PaymentOutputDto>();
-
     }
+
+
 }
