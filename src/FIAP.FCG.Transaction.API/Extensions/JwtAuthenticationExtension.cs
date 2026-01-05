@@ -28,6 +28,24 @@ namespace FIAP.FCG.Transaction.API.Extensions
                     ValidIssuer = configuration["Jwt:Issuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!))
                 };
+                
+                options.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = ctx =>
+                    {
+                        Console.WriteLine("JWT FAILED: " + ctx.Exception);
+                        return Task.CompletedTask;
+                    },
+                    OnChallenge = ctx =>
+                    {
+                        Console.WriteLine("JWT CHALLENGE: " + ctx.Error + " - " + ctx.ErrorDescription);
+                        Console.WriteLine("Issuer no UseJwtAuthentication: " + configuration["Jwt:Issuer"]);
+
+
+                        return Task.CompletedTask;
+                    }
+                };
+
             });
 
             services.AddAuthorization(options =>
