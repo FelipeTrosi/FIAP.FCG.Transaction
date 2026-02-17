@@ -1,23 +1,24 @@
-﻿using FIAP.FCG.Transaction.Infrastructure.Logger;
+﻿using FIAP.FCG.Contracts.Messaging.Events;
+using FIAP.FCG.Transaction.Infrastructure.Logger;
 using FIAP.FCG.Transaction.Infrastructure.Repository.Interfaces;
 using FIAP.FCG.Transaction.Service.Dto.Transaction;
 using FIAP.FCG.Transaction.Service.Exceptions;
 using FIAP.FCG.Transaction.Service.Interfaces.Clients;
 using FIAP.FCG.Transaction.Service.Interfaces.Services;
 using FIAP.FCG.Transaction.Service.Util;
+using MassTransit;
 using System.Text.Json;
 
 namespace FIAP.FCG.Transaction.Service.Services;
 
-public class TransactionService(IBaseLogger<TransactionService> logger, ITransactionRepository repository, IPaymentService paymentService,
-    IUserClient userClient, IGameClient gameClient) : ITransactionService
+public class TransactionService(IBaseLogger<TransactionService> logger, ITransactionRepository repository, 
+    IUserClient userClient, IGameClient gameClient, ISendEndpointProvider send) : ITransactionService
 {
     private readonly ITransactionRepository _repository = repository;
-    private readonly IPaymentService _paymentService = paymentService;
     private readonly IBaseLogger<TransactionService> _logger = logger;
     private readonly IUserClient _userClient = userClient;
     private readonly IGameClient _gameClient = gameClient;
-
+    private readonly ISendEndpointProvider _send = send;
 
     public async Task Create(TransactionCreateDto entity)
     {
@@ -26,8 +27,8 @@ public class TransactionService(IBaseLogger<TransactionService> logger, ITransac
 
         try
         {
-            _userClient.GetById(entity.UserId, cancellation).Wait();
-            _gameClient.GetById(entity.GameId, cancellation).Wait();
+            var user = await _userClient.GetById(entity.UserId, cancellation);
+            await _gameClient.GetById(entity.GameId, cancellation);
 
             var createdTransaction = _repository.Create(new()
             {
@@ -44,17 +45,20 @@ public class TransactionService(IBaseLogger<TransactionService> logger, ITransac
             var random = new Random();
             int amount = random.Next(57, 399);
 
-            _paymentService.ProcessPaymentAsync(new
+            var endpoint = await _send.GetSendEndpoint(new Uri("queue:payment-requested"));
+
+            await endpoint.Send<PaymentRequested>(new
             {
-                transactionId = createdTransaction.Id,
-                userId = entity.UserId,
-                amount,
-                method = "PIX"
-            }).Wait();
+                TransactionId = createdTransaction.Id,
+                UserId = createdTransaction.UserId,
+                Amount = amount,
+                Timestamp = DateTime.UtcNow,
+                Email = user!.Email
+            });
         }
         catch (Exception ex)
         {
-            _logger.LogError("Erro na criação do usuário");
+            _logger.LogError($"Erro na criação da transaction: {ex.Message}");
             throw new Exception(ex.Message);
         }
     }

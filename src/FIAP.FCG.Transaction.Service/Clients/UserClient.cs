@@ -45,4 +45,5 @@ public class UserClient(HttpClient http, IBaseLogger<UserClient> logger) : IUser
 
         return await resp.Content.ReadFromJsonAsync<UserResponseDto>(ct)!;
     }
+
 }

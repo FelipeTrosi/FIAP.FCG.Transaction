@@ -2,7 +2,9 @@ using FIAP.FCG.Transaction.API.Extensions;
 using FIAP.FCG.Transaction.Domain.Entity;
 using FIAP.FCG.Transaction.Infrastructure.Repository;
 using FIAP.FCG.Transaction.Service.Clients;
+using FIAP.FCG.Transaction.Service.Consumers;
 using FIAP.FCG.Transaction.Service.Interfaces.Clients;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -130,6 +132,36 @@ Log.Logger = new LoggerConfiguration()
 builder.Host.UseSerilog();
 #endregion
 
+#region -- Masstransit
+
+var rabbitHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST");
+var rabbitUser = Environment.GetEnvironmentVariable("RABBITMQ_USER");
+var rabbitPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS");
+
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<PaymentRequestedConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host(rabbitHost, "/", h =>
+        {
+            h.Username(rabbitUser!);
+            h.Password(rabbitPass!);
+        });
+
+        cfg.ReceiveEndpoint("payment-requested", e =>
+        {
+            e.UseMessageRetry(r => r.Interval(5, TimeSpan.FromSeconds(5)));
+            e.ConfigureConsumer<PaymentRequestedConsumer>(context);
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+#endregion
+
 
 var app = builder.Build();
 
@@ -154,5 +186,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHealthChecks("/health");
+
+app.MapGet("/health", () => Results.Ok("Healthy"));
 
 app.Run();

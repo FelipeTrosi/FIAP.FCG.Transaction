@@ -15,7 +15,7 @@ public class PaymentService(IBaseLogger<PaymentService> logger, IOptions<Payment
 
     public async Task<PaymentOutputDto?> ProcessPaymentAsync(object payload)
     {
-        _logger.LogInformation("Iniciando chamada AWS Lambda para processo da transação !");
+        _logger.LogInformation("Iniciando chamada para processo da transação !");
 
         using var http = new HttpClient();
         var resp = await http.PostAsJsonAsync(_options.Url, payload);

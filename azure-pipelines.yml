@@ -7,7 +7,7 @@ pr:
 
 variables:
   BuildConfiguration: 'Release'
-  Project: 'src/FIAP.FCG.FIAP.FCG.Transaction.API.API/FIAP.FCG.FIAP.FCG.Transaction.API.API.csproj'
+  Project: 'src/FIAP.FCG.Transaction.API/FIAP.FCG.Transaction.API.csproj'
   ArtifactName: 'drop'
   PublishDir: '$(Build.ArtifactStagingDirectory)/$(BuildConfiguration)'
 

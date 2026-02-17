@@ -16,10 +16,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MassTransit" Version="8.5.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FIAP.FCG.Contracts\FIAP.FCG.Contracts.csproj" />
     <ProjectReference Include="..\FIAP.FCG.Transaction.Domain\FIAP.FCG.Transaction.Domain.csproj" />
     <ProjectReference Include="..\FIAP.FCG.Transaction.Infrastructure\FIAP.FCG.Transaction.Infrastructure.csproj" />
   </ItemGroup>
